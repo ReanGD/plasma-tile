@@ -1,7 +1,7 @@
 import QtQuick 2.0
 
 Item {
-  readonly property string prefix: 'Grid-Tiling: '
+  readonly property string prefix: 'Plasma-Tile: '
 
   function register(name, shortcut, method) {
     KWin.registerShortcut(prefix + name, prefix + name, shortcut, method);

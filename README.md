@@ -2,10 +2,6 @@
 
 Tiling script for kwin, based on [lingtjien version](https://github.com/lingtjien/Grid-Tiling-Kwin)
 
-# Kwin Grid-Tiling Script
-
-[![](https://i.imgur.com/TzdWQVM.png)](https://youtu.be/N1Bg-H9Lpzs)
-
 ## Install
 
 *Note:* `*path*` *is the path to this repository.*
@@ -16,19 +12,19 @@ Tiling script for kwin, based on [lingtjien version](https://github.com/lingtjie
 kpackagetool5 --type KWin/Script -i *path*
 mkdir -p ~/.local/share/kservices5
 cd ~/.local/share/kservices5
-ln -s *path*/metadata.desktop kwin-script-grid-tiling.desktop
+ln -s *path*/metadata.desktop plasma-tile.desktop
 ```
 
 ### Local Installation (Advanced)
 
 ```
-mkdir -p ~/.local/share/kwin/scripts/grid-tiling
-cd ~/.local/share/kwin/scripts/grid-tiling
+mkdir -p ~/.local/share/kwin/scripts/plasma-tile
+cd ~/.local/share/kwin/scripts/plasma-tile
 ln -s *path*/contents contents
 ln -s *path*/metadata.desktop metadata.desktop
 mkdir -p ~/.local/share/kservices5
 cd ~/.local/share/kservices5
-ln -s *path*/metadata.desktop kwin-script-grid-tiling.desktop
+ln -s *path*/metadata.desktop plasma-tile.desktop
 ```
 
 *Note: You can replace `ln -s` for `cp`, if you prefer to copy and not have it linked to your cloned repository (if you do this then you're pretty much manually doing what `kpackagetool5` does), using `ln` instead of `cp` will result in an automatic update when you pull the latest changes*
@@ -49,21 +45,21 @@ Delete the linked or copied files that you created during installation. To remov
 - restriction of minimum space a client can occupy on a virtual desktop, as in the amount of clients this client can share a virtual desktop with
   - a size of `1` is the largest and fully takes up a whole virtual desktop, size of `2` means that it takes up at least half of the virtual desktop and so forth...
   - matching is done by regex and it defaults to the maximum which is the number of rows multiplied by columns of the largest grid
-- move clients between virtual desktops (supports the default KWin shortcuts). `Grid-Tiling: Move *Next/Previous* Desktop/Screen` moves the client to the next desktop or screen that has space, prioritizes screen over desktop.
+- move clients between virtual desktops (supports the default KWin shortcuts). `Plasma-Tile: Move *Next/Previous* Desktop/Screen` moves the client to the next desktop or screen that has space, prioritizes screen over desktop.
 - swap clients within a virtual desktop by dragging them on top with most overlap
 - move clients within a virtual desktop, first attempts to move the client if that fails it will fallback to switching.
-  - `Grid-Tiling: Swap *Up/Down*`
-  - `Grid-Tiling: Move/Swap *Left/Right*`
+  - `Plasma-Tile: Swap *Up/Down*`
+  - `Plasma-Tile: Move/Swap *Left/Right*`
 - dynamically resize clients up to a minimum as defined by `dividerBound`
   - dragging client borders by mouse
-  - `Grid-Tiling: *Increase/Decrease* Size` using a step size of `dividerStep`
+  - `Plasma-Tile: *Increase/Decrease* Size` using a step size of `dividerStep`
 - minimization of clients (suppports the default KWin shortcuts)
-- minimizes all other clients or unminimizes all clients on the current desktop `Grid-Tiling: Toggle Minimize Desktop`
-- toggle gap `Grid-Tiling: Toggle Gap`
-- toggle between bordered clients `Grid-Tiling: Toggle Border`
-- dynamically float and tile clients `Grid-Tiling: Tile/Float`
-- toggle new clients start as tile or float `Grid-Tiling: Toggle Tile`
-- close all clients on the current virtual desktop `Grid-Tiling: Close Desktop`
+- minimizes all other clients or unminimizes all clients on the current desktop `Plasma-Tile: Toggle Minimize Desktop`
+- toggle gap `Plasma-Tile: Toggle Gap`
+- toggle between bordered clients `Plasma-Tile: Toggle Border`
+- dynamically float and tile clients `Plasma-Tile: Tile/Float`
+- toggle new clients start as tile or float `Plasma-Tile: Toggle Tile`
+- close all clients on the current virtual desktop `Plasma-Tile: Close Desktop`
 - set margins, gap size, default gap state, default tile state, default border state
 - set active clients to show border
 - ignore clients by `name` or `caption` regex, these clients are completely ignored and can't be tiled.
@@ -73,30 +69,30 @@ Delete the linked or copied files that you created during installation. To remov
 ## Recommended Setup
 - set window focus policy to `focus follows mouse - mouse precedence`
 - set shortcuts `Switch One Desktop *Left/Up/Down/Right*` to `Meta+*Left/Up/Down/Right*`
-- set shortcuts `Grid-Tiling: Swap *Up/Down*` to `Meta+Ctrl+*Up/Down*`
-- set shortcuts `Grid-Tiling: Move/Swap *Left/Right*` to `Meta+Ctrl+*Left/Right*`
+- set shortcuts `Plasma-Tile: Swap *Up/Down*` to `Meta+Ctrl+*Up/Down*`
+- set shortcuts `Plasma-Tile: Move/Swap *Left/Right*` to `Meta+Ctrl+*Left/Right*`
 - set shortcuts `Switch To Window *Left/Up/Down/Right*` to `Meta+Alt+*Left/Up/Down/Right*`
-- set shortcuts `Grid-Tiling: Move *Previous/Next* Desktop` to `Meta+*Home/End*`
+- set shortcuts `Plasma-Tile: Move *Previous/Next* Desktop` to `Meta+*Home/End*`
 - set shortcuts `Window One Desktop *Down/Up*` to `Meta+*PgDn/PgUp*`
 
-- set shortcut `Grid-Tiling: Toggle Minimize Desktop` to `Meta+M`
+- set shortcut `Plasma-Tile: Toggle Minimize Desktop` to `Meta+M`
 - set shortcut `Minimize Window` to `Meta+N`
 
-- set shortcut `Grid-Tiling: Increase Step` to `Meta+=`
-- set shortcut `Grid-Tiling: Decrease Step` to `Meta+-`
-- set shortcut `Grid-Tiling: Increase Max` to `Meta++`
-- set shortcut `Grid-Tiling: Decrease Max` to `Meta+_`
+- set shortcut `Plasma-Tile: Increase Step` to `Meta+=`
+- set shortcut `Plasma-Tile: Decrease Step` to `Meta+-`
+- set shortcut `Plasma-Tile: Increase Max` to `Meta++`
+- set shortcut `Plasma-Tile: Decrease Max` to `Meta+_`
 
-- set shortcut `Grid-Tiling: Toggle Gap` to `Meta+G`
-- set shortcut `Grid-Tiling: Toggle Border` to `Meta+B`
+- set shortcut `Plasma-Tile: Toggle Gap` to `Meta+G`
+- set shortcut `Plasma-Tile: Toggle Border` to `Meta+B`
 
-- set shortcut `Grid-Tiling: Toggle Tile` to `Meta+Shift+T`
-- set shortcut `Grid-Tiling: Tile/Float` to `Meta+T`
+- set shortcut `Plasma-Tile: Toggle Tile` to `Meta+Shift+T`
+- set shortcut `Plasma-Tile: Tile/Float` to `Meta+T`
 
-- set shortcut `Grid-Tiling: Close Desktop` to `Meta+Q`
+- set shortcut `Plasma-Tile: Close Desktop` to `Meta+Q`
 - set shortcut `Close Window` to `Meta+W`
 
-- set shortcut `Grid-Tiling: Refresh` to `Meta+R`
+- set shortcut `Plasma-Tile: Refresh` to `Meta+R`
 
 *If you use multiple screens you could also consider using the default shortcuts of KWin `Window To *Previous/Next* *Screen*` to `Meta+*PgDn/PgUp*` to easily move clients between screens*
 

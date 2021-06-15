@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Grid-Tiling
+Name=Plasma-Tile
 Comment=Automatically tile new windows with gaps in any grid size
 Icon=preferences-system-windows-script-test
 Type=Service
@@ -8,7 +8,7 @@ X-Plasma-API=declarativescript
 X-Plasma-MainScript=code/Main.qml
 
 X-KDE-PluginInfo-Author=LinG
-X-KDE-PluginInfo-Name=grid-tiling
+X-KDE-PluginInfo-Name=plasma-tile
 X-KDE-PluginInfo-Version=1.0.0
 
 X-KDE-PluginInfo-Depends=
@@ -16,5 +16,5 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-ServiceTypes=KWin/Script,KCModule
 
 X-KDE-Library=kwin/effects/configs/kcm_kwin4_genericscripted
-X-KDE-PluginKeyword=grid-tiling
-X-KDE-ParentComponents=grid-tiling
+X-KDE-PluginKeyword=plasma-tile
+X-KDE-ParentComponents=plasma-tile
