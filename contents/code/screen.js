@@ -1,9 +1,11 @@
 .import 'line.js' as Line;
 /* global Line:false */
+Qt.include("layout.js");
 
 const create = () => ({ // eslint-disable-line no-unused-vars
   lines: [],
   dividers: [],
+  clients: [],
   nclients() {
     return this.lines.reduce((n, l) => n + l.clients.length, 0);
   },
@@ -46,12 +48,14 @@ const create = () => ({ // eslint-disable-line no-unused-vars
     let line = this.smallest();
     if (line && line.minSpace() + client.minSpace <= 1 / this.lines.length && line.clients.length < max[0] && (this.lines.length >= max[1] || this.lines.length > line.clients.length)) {
       if (line.addClient(client)) {
+        this.clients.push(client);
         client.lineIndex = line.length - 1;
         return client;
       }
     } else if (client.minSpace <= 1 / (this.lines.length + 1) && this.lines.length < max[1]) {
       line = this.addLine();
       if (line && line.addClient(client)) {
+        this.clients.push(client);
         client.lineIndex = line.length - 1;
         return client;
       }
@@ -110,6 +114,9 @@ const create = () => ({ // eslint-disable-line no-unused-vars
   },
   render(screenIndex, desktopIndex, activityId) {
     const area = workspace.clientArea(0, screenIndex, desktopIndex + 1);
+    const l = new TileRight(area);
+    l.draw(this.clients);
+    return;
     const width = config.width(area.width, this.lines.length - this.nminimized());
 
     let x = config.x(area.x);
