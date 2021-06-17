@@ -64,7 +64,7 @@ const create = () => ({ // eslint-disable-line no-unused-vars
       const geometry = Qt.rect(Math.floor(x), Math.floor(y), Math.floor(w), Math.floor(h));
 
       // these properties are used internally only so they must be set first as they are used to check
-      client.geometryRender = geometry;
+      // client.geometryRender = geometry;
       client.clientIndex = i;
       client.lineIndex = lineIndex;
       client.screenIndex = screenIndex;
@@ -72,10 +72,10 @@ const create = () => ({ // eslint-disable-line no-unused-vars
       client.activityId = activityId;
 
       // these properties are from kwin and will thus trigger additional signals, these properties must be set last to prevent the signals that are hooked into this script from triggering before the internal properties have been set
-      client.noBorder = config.borderActive && client.active ? false : !config.border;
+      // client.noBorder = config.borderActive && client.active ? false : !config.border;
       client.desktop = desktopIndex + 1; // KWin desktop index starting at 1
-      workspace.sendClientToScreen(client, screenIndex);
-      client.geometry = geometry;
+      // workspace.sendClientToScreen(client, screenIndex);
+      // client.geometry = geometry;
 
       y += h + config.gap;
       previous = current;

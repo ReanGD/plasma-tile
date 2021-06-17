@@ -1,6 +1,7 @@
 .import 'line.js' as Line;
 /* global Line:false */
 Qt.include("layout.js");
+Qt.include("log.js");
 
 const create = () => ({ // eslint-disable-line no-unused-vars
   lines: [],
@@ -62,6 +63,8 @@ const create = () => ({ // eslint-disable-line no-unused-vars
     }
   },
   removeClient(clientIndex, lineIndex) {
+    debug(`remove line = ${lineIndex}, client = ${clientIndex}`);
+    this.clients.splice(this.lines[lineIndex].clients[clientIndex].clientId, 1);
     if (this.lines[lineIndex].removeClient(clientIndex)) {
       if (!this.lines[lineIndex].clients.length)
         this.removeLine(lineIndex);
@@ -114,9 +117,9 @@ const create = () => ({ // eslint-disable-line no-unused-vars
   },
   render(screenIndex, desktopIndex, activityId) {
     const area = workspace.clientArea(0, screenIndex, desktopIndex + 1);
-    const l = new TileRight(area);
-    l.draw(this.clients);
-    return;
+    const l = new Layout(desktopIndex);
+    l.draw(area, this.clients);
+
     const width = config.width(area.width, this.lines.length - this.nminimized());
 
     let x = config.x(area.x);
