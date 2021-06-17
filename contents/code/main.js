@@ -1,5 +1,11 @@
 Qt.include("log.js");
 
+var ClientProperty = class {
+    constructor(numberOnDesktop) {
+        this.numberOnDesktop = numberOnDesktop;
+    }
+}
+
 var PlasmaDesktop = class {
     constructor() {
         this.clients = []
@@ -9,7 +15,12 @@ var PlasmaDesktop = class {
     }
 
     addClient(client) {
+        client.prop = new ClientProperty(this.clients.length);
         this.clients.push(client);
+    }
+
+    removeClient(client) {
+        this.clients.splice(client.prop.numberOnDesktop, 1);
     }
 }
 
@@ -29,6 +40,11 @@ var PlasmaScreen = class {
     addClient(client) {
         const desktopNum = client.desktop - 1;
         this.desktops[desktopNum].addClient(client);
+    }
+
+    removeClient(client) {
+        const desktopNum = client.desktop - 1;
+        this.desktops[desktopNum].removeClient(client);
     }
 }
 
@@ -70,28 +86,30 @@ var PlasmaTile = class {
 
             debug(`add: desktop = ${client.desktop}, screen = ${client.screen}, caption = ${client.caption}`);
             this.screens[client.screen].addClient(client);
-        });
+        }.bind(this));
 
         workspace.clientRemoved.connect(function(client) {
             if (!client.normalWindow) {
                 return;
             }
+
             debug(`del: desktop = ${client.desktop}, screen = ${client.screen}, caption = ${client.caption}`);
-        });
+            this.screens[client.screen].removeClient(client);
+        }.bind(this));
 
         workspace.clientMinimized.connect(function(client) {
             if (!client.normalWindow) {
                 return;
             }
             debug(`min: desktop = ${client.desktop}, screen = ${client.screen}, caption = ${client.caption}`);
-        });
+        }.bind(this));
 
         workspace.clientUnminimized.connect(function(client) {
             if (!client.normalWindow) {
                 return;
             }
             debug(`unMin: desktop = ${client.desktop}, screen = ${client.screen}, caption = ${client.caption}`);
-        });
+        }.bind(this));
     }
 }
 
