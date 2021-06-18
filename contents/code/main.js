@@ -1,4 +1,5 @@
 Qt.include("log.js");
+Qt.include("timer.js");
 Qt.include("layout.js");
 
 var ClientProperty = class {
@@ -66,39 +67,9 @@ var PlasmaScreen = class {
     }
 }
 
-var Timers = class {
-    constructor() {
-        this.timers = [];
-    }
-
-    addTimer(func, interval) {
-        var timer = this.timers.pop() || Qt.createQmlObject("import QtQuick 2.0; Timer {}", scriptRoot);
-
-        const callback = () => {
-            try {
-                timer.triggered.disconnect(callback);
-            } catch (e) {
-                debugException("Timer error: ", e);
-            }
-            try {
-                func();
-            } catch (e) {
-                debugException("Timer error: ", e);
-            }
-            this.timers.push(timer);
-        };
-
-        timer.interval = interval;
-        timer.repeat = false;
-        timer.triggered.connect(callback);
-        timer.start();
-    }
-}
-
 var PlasmaTile = class {
     constructor() {
         this.screens = [];
-        this.timers = new Timers();
     }
 
     init() {
@@ -117,7 +88,7 @@ var PlasmaTile = class {
     }
 
     updateAfterTimeout(screenNumber, desktopNumber) {
-        this.timers.addTimer(function() {
+        addTimer(function() {
             debug("update");
             this.screens[screenNumber].update(desktopNumber);
         }.bind(this), 50);
