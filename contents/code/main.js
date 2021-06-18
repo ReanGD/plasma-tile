@@ -4,8 +4,8 @@ Qt.include("layout.js");
 
 var ClientProperty = class {
     constructor(numberOnDesktop) {
-        this.numberOnDesktop = numberOnDesktop;
         this.needGeometry = Qt.rect(0, 0, 0, 0);
+        this.numberOnDesktop = numberOnDesktop;
     }
 }
 
@@ -18,10 +18,10 @@ var PlasmaDesktop = class {
     addClient(client) {
         client.prop = new ClientProperty(this.clients.length);
         client.geometryChanged.connect(function() {
-            const needGeometry = this.prop.needGeometry;
-            const geometry = this.geometry;
-            const diff = Qt.rect(needGeometry.x - geometry.x, needGeometry.y - geometry.y, needGeometry.width - geometry.width, needGeometry.height - geometry.height);
-            debug(`geometryChanged: number = ${this.prop.numberOnDesktop}, diff = ${diff}`);
+            // const needGeometry = this.prop.needGeometry;
+            // const geometry = this.geometry;
+            // const diff = Qt.rect(needGeometry.x - geometry.x, needGeometry.y - geometry.y, needGeometry.width - geometry.width, needGeometry.height - geometry.height);
+            // debug(`geometryChanged: number = ${this.prop.numberOnDesktop}, diff = ${diff}`);
         }.bind(client));
 
         this.clients.push(client);
@@ -29,6 +29,9 @@ var PlasmaDesktop = class {
 
     removeClient(client) {
         this.clients.splice(client.prop.numberOnDesktop, 1);
+        for (let [i, client] of this.clients.entries()) {
+            client.prop.numberOnDesktop = i;
+        };
     }
 
     update(rcScreen) {
@@ -89,7 +92,6 @@ var PlasmaTile = class {
 
     updateAfterTimeout(screenNumber, desktopNumber) {
         addTimer(function() {
-            debug("update");
             this.screens[screenNumber].update(desktopNumber);
         }.bind(this), 50);
     }

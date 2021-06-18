@@ -3,8 +3,8 @@ Qt.include("log.js");
 var BaseLayout = class {
     updateClient(client, rc) {
         client.prop.needGeometry = rc;
+        client.noBorder = true;
         client.geometry = rc;
-        // client.noBorder = true;
     }
 }
 
@@ -44,7 +44,6 @@ var Layout = class {
             this.impl.updateClient(clients[0], rcScreen);
             return;
         }
-
         this.impl.update(rcScreen, clients);
     }
 }
