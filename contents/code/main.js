@@ -2,6 +2,13 @@ Qt.include("log.js");
 Qt.include("timer.js");
 Qt.include("layout.js");
 
+var Hotkey = {
+    WindowMoveToUp: 1,
+    WindowMoveToDown: 2,
+    WindowMoveToLeft: 3,
+    WindowMoveToRight: 4,
+};
+
 var ClientProperty = class {
     constructor(numberOnDesktop) {
         this.needGeometry = Qt.rect(0, 0, 0, 0);
@@ -13,6 +20,12 @@ var PlasmaDesktop = class {
     constructor() {
         this.clients = []
         this.layout = new Layout();
+    }
+
+    _updateNumberOnDesktop() {
+        for (let [i, client] of this.clients.entries()) {
+            client.prop.numberOnDesktop = i;
+        }
     }
 
     addClient(client) {
@@ -29,13 +42,27 @@ var PlasmaDesktop = class {
 
     removeClient(client) {
         this.clients.splice(client.prop.numberOnDesktop, 1);
-        for (let [i, client] of this.clients.entries()) {
-            client.prop.numberOnDesktop = i;
-        };
+        this._updateNumberOnDesktop();
     }
 
     update(rcScreen) {
         this.layout.update(rcScreen, this.clients);
+    }
+
+    swapByDirection(dir) {
+        const currentClient = workspace.activeClient;
+        const nextClient = this.layout.nextClientByDirection(this.clients, currentClient, dir);
+        if (currentClient == nextClient) {
+            return false;
+        }
+        if (!currentClient.prop) {
+            return false;
+        }
+        this.clients[currentClient.prop.numberOnDesktop] = nextClient;
+        this.clients[nextClient.prop.numberOnDesktop] = currentClient;
+        this._updateNumberOnDesktop();
+
+        return true;
     }
 }
 
@@ -68,6 +95,11 @@ var PlasmaScreen = class {
             this.update(i);
         }
     }
+
+    swapByDirection(dir) {
+        const desktopNum = workspace.currentDesktop - 1;
+        return this.desktops[desktopNum].swapByDirection(dir);
+    }
 }
 
 var PlasmaTile = class {
@@ -83,6 +115,7 @@ var PlasmaTile = class {
         }
         this.loadClients();
         this.subscribeToWorkspaceSignals();
+        this.bindHotkeys();
         this.updateAll();
     }
 
@@ -172,6 +205,50 @@ var PlasmaTile = class {
             const desktopNum = client.desktop - 1;
             log(`unMin: desktop = ${desktopNum}, screen = ${client.screen}, number = ${client.prop.numberOnDesktop}`);
         });
+    }
+
+    swapByDirection(dir) {
+        if (this.screens[workspace.activeScreen].swapByDirection(dir)) {
+            const desktopNum = workspace.currentDesktop - 1;
+            this.updateAfterTimeout(workspace.activeScreen, desktopNum);
+        }
+    }
+
+    _onHotKey(hotkey) {
+        switch(hotkey) {
+            case Hotkey.WindowMoveToUp:
+                this.swapByDirection(Direction.Up);
+                break;
+                case Hotkey.WindowMoveToDown:
+                this.swapByDirection(Direction.Down);
+                break;
+                case Hotkey.WindowMoveToLeft:
+                this.swapByDirection(Direction.Left);
+                break;
+                case Hotkey.WindowMoveToRight:
+                this.swapByDirection(Direction.Right);
+                break;
+            default:
+                log(`Unknown hotkey ${hotkey}`);
+                break;
+          }
+    }
+
+    _bindHotkey(title, keySequence, hotkey) {
+        KWin.registerShortcut("PlasmaTile: " + title, "", keySequence, function() {
+            try {
+                this._onHotKey(hotkey);
+            } catch (e) {
+                logException("HotKey handler error: ", e);
+            }
+        }.bind(this));
+    }
+
+    bindHotkeys() {
+        this._bindHotkey("Move window to up", "Meta+Shift+I", Hotkey.WindowMoveToUp);
+        this._bindHotkey("Move window to down", "Meta+Shift+K", Hotkey.WindowMoveToDown);
+        this._bindHotkey("Move window to left", "Meta+Shift+J", Hotkey.WindowMoveToLeft);
+        this._bindHotkey("Move window to right", "Meta+Shift+L", Hotkey.WindowMoveToRight);
     }
 }
 

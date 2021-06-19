@@ -1,5 +1,12 @@
 Qt.include("log.js");
 
+var Direction = {
+    Up: 0,
+    Down: 1,
+    Left: 2,
+    Right: 3,
+};
+
 var BaseLayout = class {
     updateClient(client, rc) {
         client.prop.needGeometry = rc;
@@ -9,6 +16,30 @@ var BaseLayout = class {
 }
 
 var LayoutTileRight = class extends BaseLayout {
+    nextClientByDirection(clients, currentID, dir) {
+        switch(dir) {
+            case Direction.Up:
+                if (currentID <= 1) {
+                    return clients[currentID];
+                }
+                return clients[currentID - 1];
+            case Direction.Down:
+                if ((currentID == 0) || (currentID == clients.length - 1)) {
+                    return clients[currentID];
+                }
+                return clients[currentID + 1];
+            case Direction.Left:
+                return clients[0];
+            case Direction.Right:
+                if (currentID == 0) {
+                    return clients[1];
+                }
+                return clients[currentID];
+            default:
+                return clients[currentID];
+        }
+    }
+
     update(rcScreen, clients) {
         const wRow0 = Math.floor(rcScreen.width / 2);
         const wRow1 = rcScreen.width - wRow0;
@@ -34,6 +65,19 @@ var LayoutTileRight = class extends BaseLayout {
 var Layout = class {
     constructor() {
         this.impl = new LayoutTileRight();
+    }
+
+    nextClientByDirection(clients, currentClient, dir) {
+        if (clients.length == 0) {
+            return currentClient;
+        }
+        if (clients.length == 1) {
+            return clients[0];
+        }
+        if (!currentClient.prop) {
+            return clients[0];
+        }
+        return this.impl.nextClientByDirection(clients, currentClient.prop.numberOnDesktop, dir);
     }
 
     update(rcScreen, clients) {
