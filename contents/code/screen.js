@@ -63,7 +63,6 @@ const create = () => ({ // eslint-disable-line no-unused-vars
     }
   },
   removeClient(clientIndex, lineIndex) {
-    debug(`remove line = ${lineIndex}, client = ${clientIndex}`);
     this.clients.splice(this.lines[lineIndex].clients[clientIndex].clientId, 1);
     if (this.lines[lineIndex].removeClient(clientIndex)) {
       if (!this.lines[lineIndex].clients.length)

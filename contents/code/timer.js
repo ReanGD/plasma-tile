@@ -12,12 +12,12 @@ var _Timers = class {
             try {
                 timer.triggered.disconnect(callback);
             } catch (e) {
-                debugException("Timer error: ", e);
+                logException("Timer error: ", e);
             }
             try {
                 func();
             } catch (e) {
-                debugException("Timer error: ", e);
+                logException("Timer error: ", e);
             }
             this.timers.push(timer);
         };

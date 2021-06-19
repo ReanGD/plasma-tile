@@ -1,15 +1,15 @@
-const DEBUG = {
+const LOG = {
     enabled: true,
 };
 
-function debug(text) {
-    if (DEBUG.enabled) {
+function log(text) {
+    if (LOG.enabled) {
         console.log(text);
     }
 }
 
-function debugException(text, e) {
-    if (DEBUG.enabled) {
+function logException(text, e) {
+    if (LOG.enabled) {
         if (e.message) {
             text += e.message;
         }

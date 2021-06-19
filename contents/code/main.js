@@ -21,7 +21,7 @@ var PlasmaDesktop = class {
             // const needGeometry = this.prop.needGeometry;
             // const geometry = this.geometry;
             // const diff = Qt.rect(needGeometry.x - geometry.x, needGeometry.y - geometry.y, needGeometry.width - geometry.width, needGeometry.height - geometry.height);
-            // debug(`geometryChanged: number = ${this.prop.numberOnDesktop}, diff = ${diff}`);
+            // log(`geometryChanged: number = ${this.prop.numberOnDesktop}, diff = ${diff}`);
         }.bind(client));
 
         this.clients.push(client);
@@ -76,7 +76,7 @@ var PlasmaTile = class {
     }
 
     init() {
-        debug(`Plasma Tile: started (screens = ${workspace.numScreens}, desktops = ${workspace.desktops})`);
+        log(`Plasma Tile: started (screens = ${workspace.numScreens}, desktops = ${workspace.desktops})`);
 
         for (var i=0; i!=workspace.numScreens; i++) {
             this.screens.push(new PlasmaScreen(i));
@@ -84,6 +84,10 @@ var PlasmaTile = class {
         this.loadClients();
         this.subscribeToWorkspaceSignals();
         this.updateAll();
+    }
+
+    _isTiled(client) {
+        return (client.normalWindow && !client.modal)
     }
 
     update(screenNumber, desktopNumber) {
@@ -106,56 +110,68 @@ var PlasmaTile = class {
         const clients = workspace.clientList();
         for (var i= 0; i!=clients.length; i++) {
             const client = clients[i];
-            if (!client.normalWindow) {
+            if (!this._isTiled(client)) {
                 continue;
             }
 
             const desktopNum = client.desktop - 1;
             this.screens[client.screen].addClient(client);
-            debug(`cur: desktop = ${desktopNum}, screen = ${client.screen}, number = ${client.prop.numberOnDesktop}`);
+            log(`cur: desktop = ${desktopNum}, screen = ${client.screen}, number = ${client.prop.numberOnDesktop}`);
         }
     }
 
+    _subscribeToSignal(signal, handler) {
+        const wrapper = (...args) => {
+            try {
+                handler.apply(this, args);
+            } catch (e) {
+                logException("Signal handler error: ", e);
+            }
+        };
+
+        signal.connect(wrapper);
+    }
+
     subscribeToWorkspaceSignals() {
-        workspace.clientAdded.connect(function(client) {
-            if (!client.normalWindow) {
+        this._subscribeToSignal(workspace.clientAdded, (client) => {
+            if (!this._isTiled(client)) {
                 return;
             }
 
             const desktopNum = client.desktop - 1;
             this.screens[client.screen].addClient(client);
-            debug(`add: desktop = ${desktopNum}, screen = ${client.screen}, number = ${client.prop.numberOnDesktop}`);
+            log(`add: desktop = ${desktopNum}, screen = ${client.screen}, number = ${client.prop.numberOnDesktop}`);
             this.updateAfterTimeout(client.screen, desktopNum);
-        }.bind(this));
+        });
 
-        workspace.clientRemoved.connect(function(client) {
-            if (!client.normalWindow) {
+        this._subscribeToSignal(workspace.clientRemoved, (client) => {
+            if (!this._isTiled(client)) {
                 return;
             }
 
             const desktopNum = client.desktop - 1;
             this.screens[client.screen].removeClient(client);
-            debug(`del: desktop = ${desktopNum}, screen = ${client.screen}, number = ${client.prop.numberOnDesktop}`);
+            log(`del: desktop = ${desktopNum}, screen = ${client.screen}, number = ${client.prop.numberOnDesktop}`);
             this.updateAfterTimeout(client.screen, desktopNum);
-        }.bind(this));
+        });
 
-        workspace.clientMinimized.connect(function(client) {
-            if (!client.normalWindow) {
+        this._subscribeToSignal(workspace.clientMinimized, (client) => {
+            if (!this._isTiled(client)) {
                 return;
             }
 
             const desktopNum = client.desktop - 1;
-            debug(`min: desktop = ${desktopNum}, screen = ${client.screen}, number = ${client.prop.numberOnDesktop}`);
-        }.bind(this));
+            log(`min: desktop = ${desktopNum}, screen = ${client.screen}, number = ${client.prop.numberOnDesktop}`);
+        });
 
-        workspace.clientUnminimized.connect(function(client) {
-            if (!client.normalWindow) {
+        this._subscribeToSignal(workspace.clientUnminimized, (client) => {
+            if (!this._isTiled(client)) {
                 return;
             }
 
             const desktopNum = client.desktop - 1;
-            debug(`unMin: desktop = ${desktopNum}, screen = ${client.screen}, number = ${client.prop.numberOnDesktop}`);
-        }.bind(this));
+            log(`unMin: desktop = ${desktopNum}, screen = ${client.screen}, number = ${client.prop.numberOnDesktop}`);
+        });
     }
 }
 
